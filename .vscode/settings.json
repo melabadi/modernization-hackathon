@@ -1,0 +1,8 @@
+{
+  // Enable Agent Debug Log panel with file persistence (for token usage tracking)
+  "github.copilot.chat.agentDebugLog.enabled": true,
+  "github.copilot.chat.agentDebugLog.fileLogging.enabled": true,
+
+  // Enable local session indexing (for /chronicle:cost-tips)
+  "github.copilot.chat.localIndex.enabled": true
+}
