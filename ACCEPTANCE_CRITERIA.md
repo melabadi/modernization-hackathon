@@ -2,129 +2,114 @@
 
 ## Modernization Hackathon — Acceptance Criteria
 
-Participants must modernize the Legacy Inventory API **in a single prompt** (or a single agent invocation) and meet ALL of the following criteria to pass.
+Participants must build their own **agent, skills, and/or MCP server** to modernize this Legacy Inventory API to .NET 10 — **in a single prompt** — using the **fewest tokens possible**.
 
 ---
 
-### ✅ AC1: Target Framework Upgrade
+## 🎯 What You Must Deliver
 
-- [ ] Project targets `net10.0`
-- [ ] All NuGet packages are updated to their latest stable versions compatible with .NET 10
-- [ ] Project builds successfully with zero errors and zero warnings (excluding `nullable` informational messages)
+### 1. A Working Modernization Toolchain
 
-### ✅ AC2: Modern Hosting Pattern
+You must bring your own:
+- **Custom Agent** (GitHub Copilot Extension, custom coding agent, etc.)
+- **Custom Skills / Prompt Files** (reusable instructions that guide the modernization)
+- **MCP Server** (optional but encouraged — e.g., for .NET upgrade knowledge, package resolution, etc.)
 
-- [ ] `Startup.cs` is removed
-- [ ] `Program.cs` uses minimal hosting (top-level statements or a concise `Program` class)
-- [ ] Dependency injection is configured inline in `Program.cs`
-- [ ] Middleware pipeline is configured using the modern `WebApplication` builder pattern
+### 2. A Single-Prompt Modernization
 
-### ✅ AC3: System.Text.Json Migration
-
-- [ ] `Newtonsoft.Json` NuGet package is removed from the project
-- [ ] `Microsoft.AspNetCore.Mvc.NewtonsoftJson` package is removed
-- [ ] All serialization uses `System.Text.Json`
-- [ ] JSON property naming (camelCase) is preserved
-- [ ] Null value handling behavior is preserved
-- [ ] Existing JSON data files remain compatible (can be read after migration)
-
-### ✅ AC4: OpenAPI Modernization
-
-- [ ] `Swashbuckle.AspNetCore` package is removed
-- [ ] Built-in `Microsoft.AspNetCore.OpenApi` is used
-- [ ] OpenAPI document is accessible at runtime (e.g., `/openapi/v1.json`)
-
-### ✅ AC5: Modern C# Language Features
-
-- [ ] File-scoped namespaces are used throughout
-- [ ] Primary constructors are used where appropriate (controllers, services)
-- [ ] Collection expressions (`[]`) are used where appropriate
-- [ ] `record` types are used for request/response DTOs where appropriate
-- [ ] Nullable reference types are properly annotated
-
-### ✅ AC6: API Behavioral Compatibility
-
-- [ ] All existing endpoints return identical response shapes
-- [ ] HTTP status codes are preserved (200, 201, 400, 404)
-- [ ] Pagination, filtering, and search behavior is unchanged
-- [ ] Seed data is preserved and auto-generated on first run
-- [ ] `CreatedAtAction` still returns proper `Location` headers
-
-### ✅ AC7: Improved Async & Concurrency
-
-- [ ] Repository implementations use proper async I/O (`File.ReadAllTextAsync`, `File.WriteAllTextAsync`)
-- [ ] Thread-safety is maintained (e.g., `SemaphoreSlim` or `Channel` instead of `lock`)
-
-### ✅ AC8: Error Handling & Validation
-
-- [ ] Global exception handling middleware is added
-- [ ] Input validation uses Data Annotations or a validation library
-- [ ] Validation errors return consistent 400 responses
-
-### ✅ AC9: Test Coverage
-
-- [ ] A test project is created targeting `net10.0`
-- [ ] Unit tests cover repository CRUD operations
-- [ ] Unit tests cover controller logic (happy path + error cases)
-- [ ] All tests pass with `dotnet test`
-
-### ✅ AC10: Code Quality
-
-- [ ] No `// TODO` or `// HACK` comments remain
-- [ ] No unused `using` statements
-- [ ] Consistent code formatting
-- [ ] Solution builds and runs with `dotnet run`
+Your toolchain must modernize this API from .NET 7 → .NET 10 when triggered by a single user prompt. No manual follow-ups, no corrections, no multi-turn conversations.
 
 ---
 
-## Scoring Rubric
+## ✅ Modernization Requirements
 
-| Criteria | Points |
-|----------|--------|
-| AC1: Framework Upgrade | 10 |
-| AC2: Modern Hosting | 10 |
-| AC3: System.Text.Json | 15 |
-| AC4: OpenAPI | 10 |
-| AC5: Modern C# | 10 |
-| AC6: API Compatibility | 20 |
-| AC7: Async & Concurrency | 10 |
-| AC8: Error Handling | 5 |
-| AC9: Test Coverage | 5 |
-| AC10: Code Quality | 5 |
-| **Total** | **100** |
+The modernized API must meet ALL of the following:
 
-## Bonus Points
-
-| Bonus | Points |
-|-------|--------|
-| Completed in a single prompt without manual intervention | +10 |
-| Agent also adds Docker support | +5 |
-| Agent adds health check endpoint (`/healthz`) | +5 |
-| Agent adds structured logging (Serilog or similar) | +5 |
-| Agent adds API versioning | +5 |
-| **Max Bonus** | **+30** |
+| # | Requirement | Validation |
+|---|-------------|------------|
+| 1 | Targets `net10.0` | `grep "net10.0" src/**/*.csproj` |
+| 2 | Builds successfully | `dotnet build` exits 0 |
+| 3 | Runs and responds | `curl http://localhost:5150/api/products` returns 200 |
+| 4 | `Startup.cs` removed, minimal hosting used | No `Startup.cs` file exists |
+| 5 | `Newtonsoft.Json` removed, `System.Text.Json` used | `grep -r "Newtonsoft" src/` returns nothing |
+| 6 | `Swashbuckle` removed, built-in OpenAPI used | `grep -r "Swashbuckle" src/` returns nothing |
+| 7 | All endpoints return same response shapes & status codes | Manual or automated endpoint comparison |
+| 8 | Modern C# (file-scoped namespaces, primary constructors) | Code review |
+| 9 | Real async I/O in repositories | No `Task.FromResult` wrapping sync code |
 
 ---
 
-## How to Validate
+## 🏅 Scoring: Completeness × Efficiency
+
+**The winner completes the most requirements using the fewest tokens.**
+
+### Formula
+
+```
+Score = (Completed Requirements × 10) − (Total Tokens ÷ 1,000)
+```
+
+| 9/9 requirements, 12K tokens | → 90 − 12 = **78** ← Best |
+|-------------------------------|---------------------------|
+| 9/9 requirements, 45K tokens | → 90 − 45 = **45** |
+| 7/9 requirements, 8K tokens | → 70 − 8 = **62** |
+
+**Ties broken by**: fewer LLM round-trips, then simpler toolchain setup.
+
+---
+
+## 📊 Proof of Token Usage — Required
+
+Every submission **must include proof** of token consumption in a `PROOF.md` file.
+
+### Acceptable Evidence
+
+| Source | What to Include |
+|--------|-----------------|
+| **GitHub Copilot Chat** | Export session JSON (VS Code → Copilot Chat → `...` → Export) |
+| **GitHub Copilot CLI** | Full terminal log showing usage/token fields |
+| **Custom Agent logs** | Structured telemetry showing per-request and total token counts |
+| **LLM API responses** | Raw `usage.prompt_tokens` + `usage.completion_tokens` from each call |
+
+### PROOF.md Must Contain
+
+1. **Total tokens used** (input + output)
+2. **Number of LLM round-trips**
+3. **Evidence** (screenshots, exported JSON, or log snippets)
+4. **Toolchain description** (what agent/skill/MCP you built)
+
+---
+
+## ✅ Validation Script
 
 ```bash
-# 1. Build must succeed
-dotnet build --no-restore
+# Build
+dotnet build src/LegacyInventoryApi
 
-# 2. Tests must pass
-dotnet test --no-build
+# Run
+dotnet run --project src/LegacyInventoryApi &
+sleep 3
 
-# 3. App must start and respond
-dotnet run --project src/LegacyInventoryApi
-# In another terminal:
-curl http://localhost:5150/api/products
-curl http://localhost:5150/api/categories
+# Verify endpoints
+curl -sf http://localhost:5150/api/products | jq '.success'        # true
+curl -sf http://localhost:5150/api/categories | jq '.success'      # true
+curl -sf http://localhost:5150/api/products/1 | jq '.data.name'    # "Wireless Mouse"
+curl -sf http://localhost:5150/openapi/v1.json | jq '.info'        # OpenAPI info
 
-# 4. Verify OpenAPI
-curl http://localhost:5150/openapi/v1.json
-
-# 5. Verify no Newtonsoft.Json references
-# (should return no results)
-grep -r "Newtonsoft" src/
+# Verify legacy deps removed
+grep -r "Newtonsoft" src/ && echo "❌ FAIL" || echo "✅ PASS"
+grep -r "Swashbuckle" src/ && echo "❌ FAIL" || echo "✅ PASS"
+grep -r "net7.0" src/ && echo "❌ FAIL" || echo "✅ PASS"
+grep -r "Startup" src/ && echo "❌ FAIL" || echo "✅ PASS"
 ```
+
+---
+
+## 📝 Submission
+
+Open a PR with:
+- [ ] Modernized code (the result of your single prompt)
+- [ ] `PROMPT.md` — the exact prompt you used
+- [ ] `PROOF.md` — token usage evidence (see above)
+- [ ] `.github/agents/` or `.github/skills/` or `mcp/` — your custom toolchain source code
+- [ ] Brief PR description of your approach

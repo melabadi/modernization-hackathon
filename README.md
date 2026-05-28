@@ -2,13 +2,25 @@
 
 ## The Challenge
 
-Modernize a legacy **.NET 7 REST API** to **.NET 10** — **in a single prompt** — using your own AI-powered agents, skills, MCP servers, and custom prompts.
+Build your own **agent, skills, and/or MCP server** that can modernize a legacy **.NET 7 REST API** to **.NET 10** — **in a single prompt** — using the **fewest tokens possible**.
 
-The goal: demonstrate that AI can perform a complete framework modernization autonomously, covering not just the upgrade itself but also best practices, testing, and modern patterns.
+This isn't about manually upgrading code. It's about building the best AI-powered modernization toolchain.
 
 ---
 
-## 🎯 What You're Modernizing
+## 🎯 What You're Building
+
+**Your deliverable is a toolchain** — a combination of:
+
+- 🤖 **Custom Agent** (GitHub Copilot Extension, custom coding agent, etc.)
+- 📋 **Custom Skills / Prompt Files** (reusable modernization instructions)
+- 🔌 **MCP Server** (optional — for .NET upgrade knowledge, package resolution, etc.)
+
+Your toolchain takes this legacy API and modernizes it when a developer sends a single prompt.
+
+---
+
+## 🧪 What You're Modernizing
 
 A fully functional **Inventory Management REST API** built with intentionally legacy patterns:
 
@@ -19,8 +31,6 @@ A fully functional **Inventory Management REST API** built with intentionally le
 | Serialization | Newtonsoft.Json | System.Text.Json |
 | OpenAPI | Swashbuckle | Built-in `Microsoft.AspNetCore.OpenApi` |
 | Async | Fake async (`Task.FromResult`) | Real async I/O |
-| Concurrency | `lock` | `SemaphoreSlim` |
-| Tests | None | Full unit test coverage |
 | C# Style | Traditional | Modern (records, primary constructors, file-scoped namespaces) |
 
 ---
@@ -50,7 +60,7 @@ modernization-hackathon/
 git clone <repo-url>
 cd modernization-hackathon
 
-# Run the legacy API
+# Run the legacy API (verify it works before modernizing)
 dotnet run --project src/LegacyInventoryApi
 
 # Test it
@@ -62,95 +72,54 @@ curl http://localhost:5150/api/categories
 
 ## 🏆 Rules
 
-1. **Single Prompt**: Your agent must complete the modernization from a single user prompt (no manual follow-ups or corrections).
-2. **Bring Your Own Tools**: Use any combination of:
-   - Custom GitHub Copilot agents or extensions
-   - Custom skills and prompt files
-   - MCP (Model Context Protocol) servers
-   - Custom instructions, system prompts, or prompt libraries
-   - Any AI coding assistant (Copilot, Cursor, Cline, Aider, etc.)
-3. **No Manual Edits**: The AI must do all the work. You can craft the prompt and configure the tools, but once you hit "send," it's hands-off.
-4. **Preserve Behavior**: The modernized API must be behaviorally identical to the original (same endpoints, same response shapes, same status codes).
-5. **Must Build & Run**: `dotnet build` and `dotnet test` must pass. The API must start and serve requests.
+1. **Build a Toolchain**: You must create a custom agent, skill, and/or MCP server — not just a clever prompt.
+2. **Single Prompt**: Your toolchain must complete the modernization from one user prompt. No manual follow-ups.
+3. **Fewest Tokens Wins**: The scoring formula rewards completeness but penalizes token usage. Optimize your toolchain to be efficient.
+4. **Prove It**: You must provide logs/traces showing token usage from GitHub Copilot or your LLM of choice.
+5. **Preserve Behavior**: The modernized API must be behaviorally identical (same endpoints, same responses, same status codes).
+6. **Must Build & Run**: `dotnet build` must pass. The API must start and serve requests on .NET 10.
 
 ---
 
-## 📋 Acceptance Criteria (Summary)
+## 🏅 Scoring
 
-See [`ACCEPTANCE_CRITERIA.md`](./ACCEPTANCE_CRITERIA.md) for the full scoring rubric.
+```
+Score = (Completed Requirements × 10) − (Total Tokens ÷ 1,000)
+```
 
-| # | Criteria | Points |
-|---|----------|--------|
-| 1 | Framework upgrade to .NET 10 | 10 |
-| 2 | Modern hosting pattern | 10 |
-| 3 | System.Text.Json migration | 15 |
-| 4 | OpenAPI modernization | 10 |
-| 5 | Modern C# features | 10 |
-| 6 | API behavioral compatibility | 20 |
-| 7 | Async & concurrency improvements | 10 |
-| 8 | Error handling & validation | 5 |
-| 9 | Test coverage | 5 |
-| 10 | Code quality | 5 |
-| | **Total** | **100** |
-| | Bonus (single prompt, Docker, health checks, etc.) | **+30** |
+9 requirements worth 10 points each (90 max). Token usage is subtracted as a penalty.
+
+See [`ACCEPTANCE_CRITERIA.md`](./ACCEPTANCE_CRITERIA.md) for full details on requirements, scoring examples, and proof format.
 
 ---
 
 ## 💡 Tips for Participants
 
-- **Study the codebase first** — understand all the legacy patterns before crafting your prompt
+- **Study the legacy patterns** — understand what needs to change so your skill/agent can be precise
 - **Use the copilot-instructions.md** — it provides rich context that agents can leverage
-- **Think about ordering** — a good agent should upgrade the framework first, then refactor patterns
-- **Test compatibility** — the hardest part is ensuring the API behaves identically after modernization
-- **Seed data matters** — the JSON files must remain readable after the serializer swap
-
----
-
-## 🔍 Validation Script
-
-After modernization, run:
-
-```bash
-# Build
-dotnet build src/LegacyInventoryApi
-
-# Run tests
-dotnet test
-
-# Start the API
-dotnet run --project src/LegacyInventoryApi &
-
-# Verify endpoints
-curl -s http://localhost:5150/api/products | jq .
-curl -s http://localhost:5150/api/categories | jq .
-curl -s http://localhost:5150/api/products/search?q=mouse | jq .
-curl -s http://localhost:5150/openapi/v1.json | jq .type
-
-# Verify no legacy dependencies
-grep -r "Newtonsoft" src/ && echo "FAIL: Newtonsoft still present" || echo "PASS"
-grep -r "Swashbuckle" src/ && echo "FAIL: Swashbuckle still present" || echo "PASS"
-```
+- **MCP servers can inject knowledge** — e.g., .NET 10 migration guides, package mappings, API equivalences
+- **Skills can encode step-by-step recipes** — break the modernization into ordered steps for your agent
+- **Minimize context** — the less you send to the LLM, the fewer tokens you use. Be surgical.
 
 ---
 
 ## 📝 Submission
 
-1. Fork this repository
-2. Run your agent/prompt against the codebase
-3. Commit the result (include your prompt in a `PROMPT.md` file)
-4. Open a PR back to this repo with:
-   - The modernized code
-   - Your `PROMPT.md` showing the exact prompt used
-   - A brief description of your tooling setup (agent, skills, MCP, etc.)
+Open a PR with:
+
+1. **Modernized code** — the result of running your single prompt
+2. **Your toolchain** — agent/skill/MCP source code (in `.github/agents/`, `.github/skills/`, `mcp/`, or similar)
+3. **`PROMPT.md`** — the exact prompt you used
+4. **`PROOF.md`** — token usage evidence (logs, traces, screenshots from GHCP)
+5. **PR description** — brief explanation of your approach and tooling
 
 ---
 
 ## ⚖️ Judging
 
-Submissions will be evaluated by:
-1. **Automated scoring** against the acceptance criteria checklist
-2. **Code review** for quality and idiomatic patterns
-3. **Bonus points** for additional improvements beyond the requirements
-4. **Creativity** in agent/skill design and prompt engineering
+1. **Automated validation** — does it build, run, and pass the acceptance checks?
+2. **Token efficiency** — fewer tokens = higher score
+3. **Toolchain quality** — is the agent/skill/MCP reusable and well-designed?
+4. **Creativity** — novel approaches to minimizing tokens or maximizing reliability
 
 Good luck! 🎉
