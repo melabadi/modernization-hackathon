@@ -74,6 +74,8 @@ This gives you a full session summary with total token usage, tool calls, and du
 3. Enable **`github.copilot.chat.agentDebugLog.fileLogging.enabled`**
 4. Also ensure **`github.copilot.chat.agentDebugLog.enabled`** is on
 
+> ℹ️ These settings are already pre-configured in this repo's `.vscode/settings.json`
+
 **After your modernization prompt completes:**
 1. In the Chat view, click `...` menu → **Show Agent Debug Logs**
    - Or: Command Palette → `Developer: Open Agent Debug Logs`
@@ -81,6 +83,16 @@ This gives you a full session summary with total token usage, tool calls, and du
 3. The Summary shows: **total token usage**, tool calls count, error count, and duration
 4. To export: click the **Export (download) icon** in the top-right toolbar
    - Saves as an **OpenTelemetry JSON (OTLP format)** file — include this in your PR
+
+**Where logs are stored on disk:**
+
+| OS | Path |
+|----|------|
+| **Windows** | `%APPDATA%\Code\User\globalStorage\github.copilot-chat\agent-traces.db` |
+| **macOS** | `~/Library/Application Support/Code/User/globalStorage/github.copilot-chat/agent-traces.db` |
+| **Linux** | `~/.config/Code/User/globalStorage/github.copilot-chat/agent-traces.db` |
+
+This is a SQLite database containing all debug sessions. Use the **Export** button in the Agent Debug Log panel to get a portable OTLP JSON file for your submission.
 
 #### Method 2: Context Window Indicator (Quick Visual Proof)
 
