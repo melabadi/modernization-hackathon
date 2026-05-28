@@ -2,7 +2,9 @@
 
 ## Modernization Hackathon — Acceptance Criteria
 
-Participants must build their own **agent, skills, and/or MCP server** to modernize this Legacy Inventory API to .NET 10 — **in a single prompt** — using the **fewest tokens possible**.
+Participants must build their own **agent, skills, and/or MCP server** that can modernize this Legacy Inventory API to .NET 10 — **in a single prompt** — using the **fewest tokens possible**.
+
+> ⚡ **One Prompt Rule**: You bring **one prompt** to use with your agent. When you hit send, your agent must complete the entire modernization autonomously — no follow-ups, no corrections, no multi-turn conversations. If it fails or partially completes, that's your final result.
 
 ---
 
@@ -13,7 +15,7 @@ Participants must build their own **agent, skills, and/or MCP server** to modern
 You must bring your own:
 - **Custom Agent** (GitHub Copilot Extension, custom coding agent, etc.)
 - **Custom Skills / Prompt Files** (reusable instructions that guide the modernization)
-- **MCP Server** (optional but encouraged — e.g., for .NET upgrade knowledge, package resolution, etc.)
+- **MCP Server** (optional but can be helpful — e.g., for .NET upgrade knowledge, package resolution, etc.)
 
 ### 2. A Single-Prompt Modernization
 
@@ -78,7 +80,9 @@ This gives you a full session summary with total token usage, tool calls, and du
 
 **After your modernization prompt completes:**
 1. In the Chat view, click `...` menu → **Show Agent Debug Logs**
-   - Or: Command Palette → `Developer: Open Agent Debug Logs`
+
+   ![Show Agent Debug Logs](docs/images/show-agent-debug-logs.png)
+
 2. Click the **session description in the breadcrumb bar** at the top → opens the **Summary view**
 3. The Summary shows: **total token usage**, tool calls count, error count, and duration
 4. To export: click the **Export (download) icon** in the top-right toolbar
