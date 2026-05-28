@@ -13,8 +13,9 @@ Participants must build their own **agent, skills, and/or MCP server** that can 
 ### 1. A Working Modernization Toolchain
 
 You must bring your own:
+- **ONLY ONE Prompt** (Instructions for GitHub Copilot to execute the modernization)
 - **Custom Agent** (GitHub Copilot Extension, custom coding agent, etc.)
-- **Custom Skills / Prompt Files** (reusable instructions that guide the modernization)
+- **Custom Skills** (reusable instructions/tools that guide the modernization)
 - **MCP Server** (optional but can be helpful — e.g., for .NET upgrade knowledge, package resolution, etc.)
 
 ### 2. A Single-Prompt Modernization

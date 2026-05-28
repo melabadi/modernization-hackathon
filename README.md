@@ -81,6 +81,42 @@ curl http://localhost:5150/api/categories
 
 ---
 
+## 🔍 Validation
+
+After modernization, run the automated validator:
+
+```bash
+pwsh ./scripts/validate.ps1
+```
+
+This checks all 9 requirements and outputs a scoreboard:
+
+```
+========================================
+            SCOREBOARD
+========================================
+
+  #   Requirement                                          Pts   Status
+  ─── ──────────────────────────────────────────────────── ───── ──────
+  1   Targets net10.0                                      10    ✅
+  2   Builds successfully (dotnet build)                   10    ✅
+  3   Runs and responds on http://localhost:5150           10    ✅
+  4   Startup.cs removed, minimal hosting used             10    ✅
+  5   Newtonsoft.Json removed, System.Text.Json used       10    ✅
+  6   Swashbuckle removed, built-in OpenAPI used           10    ✅
+  7   All endpoints return correct response shapes         10    ✅
+  8   Modern C# (file-scoped namespaces, primary ctors)    10    ✅
+  9   Real async I/O (no Task.FromResult wrapping)         10    ✅
+
+  Requirements passed: 9 / 9
+  Completeness score:  90 / 90 points
+
+  🏆 ALL REQUIREMENTS MET!
+  Scoring formula: Final Score = 90 - (Total Tokens / 1000)
+```
+
+---
+
 ## 🏅 Scoring
 
 ```
