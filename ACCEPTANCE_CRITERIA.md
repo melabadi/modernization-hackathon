@@ -62,21 +62,76 @@ Score = (Completed Requirements × 10) − (Total Tokens ÷ 1,000)
 
 Every submission **must include proof** of token consumption in a `PROOF.md` file.
 
-### Acceptable Evidence
+### How to Capture Token Usage in GitHub Copilot (VS Code)
 
-| Source | What to Include |
-|--------|-----------------|
-| **GitHub Copilot Chat** | Export session JSON (VS Code → Copilot Chat → `...` → Export) |
-| **GitHub Copilot CLI** | Full terminal log showing usage/token fields |
-| **Custom Agent logs** | Structured telemetry showing per-request and total token counts |
-| **LLM API responses** | Raw `usage.prompt_tokens` + `usage.completion_tokens` from each call |
+#### Method 1: Agent Debug Log Panel (Recommended — Most Complete)
+
+This gives you a full session summary with total token usage, tool calls, and duration.
+
+**Setup (do this before starting your modernization):**
+1. Open VS Code Settings (`Ctrl+,`)
+2. Search for `agentDebugLog`
+3. Enable **`github.copilot.chat.agentDebugLog.fileLogging.enabled`**
+4. Also ensure **`github.copilot.chat.agentDebugLog.enabled`** is on
+
+**After your modernization prompt completes:**
+1. In the Chat view, click `...` menu → **Show Agent Debug Logs**
+   - Or: Command Palette → `Developer: Open Agent Debug Logs`
+2. Click the **session description in the breadcrumb bar** at the top → opens the **Summary view**
+3. The Summary shows: **total token usage**, tool calls count, error count, and duration
+4. To export: click the **Export (download) icon** in the top-right toolbar
+   - Saves as an **OpenTelemetry JSON (OTLP format)** file — include this in your PR
+
+#### Method 2: Context Window Indicator (Quick Visual Proof)
+
+The chat input box has a **context window indicator** (shaded bar):
+- **Hover over it** to see exact token count as a fraction (e.g., `47K / 128K`)
+- Shows breakdown by category (system prompt, conversation history, tool results, etc.)
+- Screenshot this after your prompt completes as supplemental proof
+
+#### Method 3: Ask Copilot Directly (Mid-Session)
+
+With `agentDebugLog.enabled` turned on, you can type:
+```
+/troubleshoot how many tokens did you use in #session
+```
+
+#### Method 4: Historical Analysis
+
+After your session, you can run:
+```
+/chronicle:cost-tips
+```
+This analyzes recent sessions for token usage patterns. Requires `github.copilot.chat.localIndex.enabled` to be `true` (default).
+
+---
+
+### For Custom Agents / MCP Servers / Direct API Calls
+
+If your toolchain calls an LLM API directly, include the raw `usage` response fields:
+```json
+{
+  "usage": {
+    "prompt_tokens": 8500,
+    "completion_tokens": 3200,
+    "total_tokens": 11700
+  }
+}
+```
+Sum all API calls for your total.
+
+---
 
 ### PROOF.md Must Contain
 
-1. **Total tokens used** (input + output)
-2. **Number of LLM round-trips**
-3. **Evidence** (screenshots, exported JSON, or log snippets)
-4. **Toolchain description** (what agent/skill/MCP you built)
+1. **Total tokens used** (input + output combined)
+2. **Number of LLM round-trips** (how many model invocations)
+3. **Evidence** — one or more of:
+   - Exported OTLP JSON from Agent Debug Log panel
+   - Screenshot of the Summary view showing token totals
+   - Screenshot of context window indicator hover tooltip
+   - Raw API response `usage` fields (if using direct LLM calls)
+4. **Toolchain description** — what agent/skill/MCP you built and how it minimizes tokens
 
 ---
 
